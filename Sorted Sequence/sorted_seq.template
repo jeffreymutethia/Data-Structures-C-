@@ -1,0 +1,80 @@
+/******************
+ * Code file for a Sorted Sequence class sorted_seq.
+ *
+ */
+
+
+// Copy constructor
+template <class Item>
+sorted_seq<Item>::sorted_seq(const sorted_seq<Item>& other) {
+    head = NULL;
+    node<Item> *tail = NULL;
+    list_copy(other.head, head, tail);
+    count = other.count;
+}
+
+// insert - Inserts the given item in the sequence in its proper
+//  sorted location
+template <class Item>
+void sorted_seq<Item>::insert(const Item& entry) {
+    count++;
+    if(head == NULL || entry <= head->data()) {
+        list_head_insert(head, entry);
+        return;
+    }
+
+    node<Item> *cursor;
+    node<Item> *prev = NULL;
+    for(cursor = head; cursor != NULL && entry > cursor->data(); cursor = cursor->link()) {
+        prev = cursor;
+    }
+    list_insert(prev, entry);
+}
+
+// contains - Searches the sequence for the given target
+//  returns true if a match was found, false otherwise
+template <class Item>
+bool sorted_seq<Item>::contains(const Item& target) {
+    node<Item>* result = list_search(head, target);
+    return result != NULL;
+}
+
+// index - Searches the sequence for the given target and 
+//  returns the index (starting from 0) of the item, or -1 if not found
+template <class Item>
+int sorted_seq<Item>::index(const Item& target) {
+    node<Item> *cursor;
+    int ind = 0;
+    for(cursor = head; cursor != NULL; cursor = cursor->link()) {
+        if(target == cursor->data()) {
+            return ind;
+        }
+        ind++;
+    }
+    return -1;
+}
+
+// erase_one - Erases the first match of the given target from the sequence
+//  returns true if a match was found and removed, false otherwise
+template <class Item>
+bool sorted_seq<Item>::erase_one(const Item& target) {
+    if(head == NULL) { return false; }
+    if(target == head->data()) {
+        list_head_remove(head);
+        count--;
+        return true;
+    }
+
+    node<Item> *cursor;
+    node<Item> *prev = NULL;
+    for(cursor = head; cursor != NULL; cursor = cursor->link()) {
+        if(target == cursor->data()) {
+            list_remove(prev);
+            count--;
+            return true;
+        }
+        prev = cursor;
+
+    }
+}
+
